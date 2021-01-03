@@ -10,13 +10,8 @@ from PyQt5.QtMultimedia import QMediaPlayer, QMediaContent, QMediaPlaylist
 from PyQt5.QtMultimediaWidgets import QVideoWidget
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel
 from PyQt5.QtWidgets import QPushButton, QGroupBox, QDoubleSpinBox, QSlider, QListWidget
+# import jamresourse 为导入资源文件,如图标等,去除后将界面将很丑....
 import jamresourse
-
-
-# class JQPushButton(QPushButton):
-#     def mousePressEvent(self, e):
-#         print('click')
-#         super().mousePressEvent(e)
 
 
 class JQSlider(QSlider):
@@ -38,36 +33,9 @@ class JQSlider(QSlider):
     def paintEvent(self, e):
         super().paintEvent(e)
 
-    # def mousePressEvent(self, e):
-    #     super().mousePressEvent(e)
-    #     if e.button() == Qt.LeftButton:
-    #         x = e.pos().x()
-    #         value = (self.maximum() - self.minimum()) * x / self.width() + self.minimum()
-    #         self.setValue(value)
 
-
-# class Commen_Thread(QThread):
-#     def __init__(self, action, *args):
-#         super(QThread, self).__init__()
-#         self.action = action
-#         self.args = args
-#         # print(self.args)
-#
-#     def run(self):
-#         print('start_thread')
-#         if self.args:
-#             if len(self.args) == 1:
-#                 self.action(self.args[0])
-#                 print(self.args[0])
-#             elif len(self.args) == 2:
-#                 self.action(self.args[0], self.args[1])
-#         else:
-#             self.action()
-# class Auto_hide(QTimer):
-#     def __init__(self,parent=None):
-#         super().__init__(parent=parent)
 class JamVideoWidget(QWidget):
-    def __init__(self, playlist=[], windowsname='Jamvideo', ffmpegpath=r'D:\python_work\Jamtools\bin', parent=None,
+    def __init__(self, playlist=[], windowsname='Jamvideo', ffmpegpath='', parent=None,
                  autoclose=False):
         super().__init__(parent=parent)
         self.player = QMediaPlayer()
@@ -83,6 +51,7 @@ class JamVideoWidget(QWidget):
                                   '.avi', '.mp3', '.wav', '.flac', '.aac', '.real media', '.midi', '.ogg', '.amr',
                                   '.png']
         self.f_path = ffmpegpath
+        if ffmpegpath=="":print("!! 未传入ffmpeg套件地址,将无法获取视频的详细信息,但仍可以播放...")
         self.control_groupbox = QGroupBox(self)
         self.time_label = QLabel(self.control_groupbox)
         self.sound_btn = QPushButton(self.control_groupbox)
@@ -132,11 +101,9 @@ class JamVideoWidget(QWidget):
         self.volume_slider.setRange(0, 100)
         self.volume_slider.setValue(100)
         self.volume_slider.setOrientation(Qt.Horizontal)
-        # self.volume_slider.hide()
         self.brightness_slider.setRange(-100, 100)
         self.brightness_slider.setValue(0)
         self.brightness_slider.setOrientation(Qt.Horizontal)
-        # self.brightness_slider.hide()
         self.list_widget.hide()
         self.playQSlider.setOrientation(Qt.Horizontal)
         self.speed_slider.setRange(0, 5)
@@ -174,6 +141,7 @@ class JamVideoWidget(QWidget):
         self.fullscreen_btn.setFocusPolicy(Qt.NoFocus)
         # self.player.setPlaybackRate(0.5)
         self.resize_all()
+        self.show()
         self.connect_all()
         self.setStyleSheet("""QSlider::groove:horizontal{ height: 12px;
                                                             left: 5px; 
@@ -257,18 +225,8 @@ class JamVideoWidget(QWidget):
         print(self.player.playbackRate())
 
     def change_brightness(self):
-        """显示条"""
         self.video_widget.setBrightness(0)
         self.brightness_slider.setValue(0)
-
-        # if self.brightness_slider.isVisible():
-        #     self.brightness_slider.hide()
-        # else:
-        #     self.brightness_slider.show()
-        # self.brightness_slider_hidetimer = QTimer()
-        # self.brightness_slider_hidetimer.timeout.connect(self.brightness_slider_hidetimer.stop)
-        # self.brightness_slider_hidetimer.timeout.connect(self.brightness_slider.hide)
-        # self.brightness_slider_hidetimer.start(3000)
 
     def change_volume(self):
         """点击了声音按钮"""
@@ -279,23 +237,11 @@ class JamVideoWidget(QWidget):
         else:
             self.player.setVolume(self.t_volume)
             self.volume_slider.setValue(self.t_volume)
-        # if self.volume_slider.isVisible():
-        #     self.volume_slider.hide()
-        # else:
-        #     self.volume_slider.show()
-        # self.volume_slider_hidetimer = QTimer()
-        # self.volume_slider_hidetimer.timeout.connect(self.volume_slider_hidetimer.stop)
-        # self.volume_slider_hidetimer.timeout.connect(self.volume_slider.hide)
-        # self.volume_slider_hidetimer.start(3000)
 
     def brightness_slider_func(self, value):
         """亮度显示改变"""
         self.video_widget.setBrightness(value)
         self.brightness_slider.setValue(value)
-        # self.brightness_slider_hidetimer = QTimer()
-        # self.brightness_slider_hidetimer.timeout.connect(self.brightness_slider_hidetimer.stop)
-        # self.brightness_slider_hidetimer.timeout.connect(self.brightness_slider.hide)
-        # self.brightness_slider_hidetimer.start(3000)
 
     def volume_slider_func(self, value):
         """声音显示改变"""
@@ -309,10 +255,6 @@ class JamVideoWidget(QWidget):
             self.sound_btn.setIcon(QIcon(':/sound2.png'))
         else:
             self.sound_btn.setIcon(QIcon(':/sound3.png'))
-        # self.volume_slider_hidetimer = QTimer()
-        # self.volume_slider_hidetimer.timeout.connect(self.volume_slider_hidetimer.stop)
-        # self.volume_slider_hidetimer.timeout.connect(self.volume_slider.hide)
-        # self.volume_slider_hidetimer.start(3000)
 
     def modechange(self):  # 改变播放循环模式
         if self.playmode < 3:
@@ -400,7 +342,7 @@ class JamVideoWidget(QWidget):
         # self.get_video_information(self.pathlist[self.playerlist.currentIndex()])
 
     def start_and_stop(self):
-        """播放暂停"""
+        """播放/暂停"""
         if self.player.state() == 2:
             self.player.play()
             self.play_pause_btn.setStyleSheet('border-image: url(:/startplay.png);')
@@ -437,6 +379,7 @@ class JamVideoWidget(QWidget):
             # self.controller.controlerrun_start(file0)
             print('start', self.playerlist.mediaCount())
         except:
+            print(sys.exc_info())
             self.get_video_information(self.pathlist[0])
             self.playerlist.setCurrentIndex(0)
 
@@ -449,7 +392,7 @@ class JamVideoWidget(QWidget):
         self.video_widget.resize(self.width(), self.height())
 
     def showNormal(self):
-        """退出全屏"""
+        """退出全屏,显示正常窗口"""
         super().showNormal()
         self.control_groupbox.show()
         self.control_autohide = False
@@ -485,11 +428,6 @@ class JamVideoWidget(QWidget):
                 self.control_groupbox.hide()
             else:
                 self.fullscreenshow_controlbox()
-        #     self.control_groupbox.show()
-        #     self.control_groupbox_hidetimer = QTimer()
-        #     self.control_groupbox_hidetimer.timeout.connect(self.control_groupbox_hidetimer.stop)
-        #     self.control_groupbox_hidetimer.timeout.connect(self.control_groupbox.hide)
-        #     self.control_groupbox_hidetimer.start(3000)
 
     def fullscreenshow_controlbox(self):
         if self.control_autohide:
@@ -532,13 +470,11 @@ class JamVideoWidget(QWidget):
                         if self.player.volume() > 0:
                             self.volume_slider_func(self.player.volume() - 2)
                 else:
-                    # self.setting_brightness = True
-                    # print(self.video_widget.brightness())
+
                     if dy > 0:
                         self.brightness_slider_func(self.video_widget.brightness() + 2)
                     else:
                         self.brightness_slider_func(self.video_widget.brightness() - 2)
-                    # self.brightness_slider.show()
                 self.update()
 
     def mouseReleaseEvent(self, e):
@@ -554,20 +490,24 @@ class JamVideoWidget(QWidget):
 
     def get_video_information(self, videoname):
         """获取视频信息"""
-        st = time.process_time()
-        self.info_finder = subprocess.Popen(
-            '"' + self.f_path + r'\ffprobe" -print_format json -show_streams -loglevel quiet "' + str(videoname) + '"',
-            shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE, encoding='utf-8')
+        try:
+            self.info_finder = subprocess.Popen(
+                '"' + self.f_path + r'\ffprobe" -print_format json -show_streams -loglevel quiet "' + str(
+                    videoname) + '"',
+                shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE, encoding='utf-8')
+            inf = self.info_finder.stdout.read()
+            if len(inf)!=0:
+                info = json.loads(inf, encoding='utf-8')
+            else:
+                raise Exception
+        except:
+            print("error: ffprobe 解析视频信息出错,请传入正确的ffmpeg路径到ffmpegpath参数,或使用其他方法获取视频详细信息\n", sys.exc_info())
 
-        info = json.loads(self.info_finder.stdout.read(), encoding='utf-8')
-        # with open('videoinfo.txt', 'w')as file:
-        #     file.write(str(info['streams'][0]))
-        # print(info['streams'][0], time.process_time() - st)
-        # print(info['streams'], time.process_time() - st)
         try:
             self.duration_ts = float(info['streams'][0]['duration']) * 1000
         except:
-            self.duration_ts = 100
+            print("error: 未获取到视频信息,视频时长已设置为9999")
+            self.duration_ts = 99999
         print(self.duration_ts, 'duration_ts')
         try:
             if not self.isFullScreen():
@@ -580,7 +520,7 @@ class JamVideoWidget(QWidget):
         except:
             pass
         self.playQSlider.setRange(0, self.duration_ts)
-        print(time.strftime("%H:%M:%S", time.gmtime(self.duration_ts / 1000)))
+        print("总时长:",time.strftime("%H:%M:%S", time.gmtime(self.duration_ts / 1000)))
         self.time_label.setText('00:00:00/{0}'.format(time.strftime("%H:%M:%S", time.gmtime(self.duration_ts / 1000))))
 
     def resizeEvent(self, e):
@@ -589,17 +529,15 @@ class JamVideoWidget(QWidget):
 
     def closeEvent(self, e):
         self.player.stop()
-        self.hide()
-        # if not self.autoclose:
-        e.ignore()
+        # self.hide()
+        # e.ignore()
+        super(JamVideoWidget, self).closeEvent(e)
 
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-
     videowidget = JamVideoWidget()
-    # videowidget = JamVideoWidget(playlist=['0.mp4', '1.mp4', '2.mp4', '3.mp4'])#传入playlist参数为播放路径列表
+    # videowidget = JamVideoWidget(playlist=['0.mp4', '1.mp4', '2.mp4', '3.mp4'],ffmpegpath=r'D:\python_work\Jamtools\bin')#传入playlist参数为播放路径列表
 
     videowidget.show()
-
     sys.exit(app.exec_())

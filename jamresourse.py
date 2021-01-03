@@ -49213,7 +49213,8 @@ qt_resource_struct_v2 = b"\
 \x00\x00\x02\xda\x00\x00\x00\x00\x00\x01\x00\x04\x6d\xe4\
 \x00\x00\x01\x6e\xba\xb0\x0c\x50\
 "
-
+print("项目地址:https://github.com/fandesfyf/JamVideoPlayer")
+print("开始前请确保已经注册多媒体解码器:从LAVFilters-0.74.1-x64 文件夹以管理员命令运行install.bat文件,否则无法播放...\n")
 qt_version = [int(v) for v in QtCore.qVersion().split('.')]
 if qt_version < [5, 8, 0]:
     rcc_version = 1
